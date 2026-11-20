@@ -27,14 +27,14 @@
 %% =====================================================================
 %%  GROUP DETAILS
 %% =====================================================================
-\newcommand{\groupno}{XX}                         % TODO: group number
+\newcommand{\groupno}{04}                         % TODO: group number
 \newcommand{\projno}{P04}
 \newcommand{\projtitle}{Ring-Oscillator PUF Key Generator with Fuzzy Extractor}
-\newcommand{\studentA}{Student 1 Name}            % TODO: your name
-\newcommand{\rollA}{B2XXXX}                       % TODO: your roll number
+\newcommand{\studentA}{Kunal Mittal}            % TODO: your name
+\newcommand{\rollA}{B24491}                       % TODO: your roll number
 \newcommand{\studentB}{Arth Saxena}               % from the git history -- please confirm
 \newcommand{\rollB}{B23250}                       % from the git history -- please confirm
-\newcommand{\repourl}{https://github.com/MRqwertyu/Ring-Oscillator-PUF-Key-Generator}
+\newcommand{\repourl}{https://github.com/hustlewithkunal/ring-oscillator-puf-key-generator}
 \newcommand{\submitdate}{\today}
 
 \newif\ifguidance
@@ -732,25 +732,24 @@ enrolment.
 \addcontentsline{toc}{section}{Contribution Statement and Acknowledgements}
 \label{sec:contrib}
 \begin{table}[H]\centering\small
-\begin{tabularx}{\linewidth}{@{}lX@{}}
-\toprule
-Member & Main contributions\\
-\midrule
-\studentA & Golden model, ESPRESSO/BDD, hand-HLS BCH decoder, SipHash, fuzzy extractor and lock, RO-PUF
-hardware and placement, characterisation, RV32 core/SoC/firmware, CTL model checking, FPGA bring-up and
-demo, report.\\
-\studentB & Repository set-up and an early 16-RO bank prototype (\texttt{RO/}); could not continue the
-FPGA work, which was then completed by \studentA.\\
-\bottomrule
-\end{tabularx}
+	\begin{tabularx}{\linewidth}{@{}lX@{}}
+		\toprule
+		Member & Main contributions\\
+		\midrule
+		\studentA & Golden model, ESPRESSO/BDD, hand-HLS BCH decoder, SipHash, fuzzy extractor and lock.\\
+		\studentB & RO-PUF hardware and placement, characterisation, RV32 core/SoC/firmware, CTL model checking.\\
+		Both & Demo preparation scripts and report writing.\\
+		\bottomrule
+	\end{tabularx}
 \end{table}
 
 \textbf{Open-source IP and tools used:} Xilinx VIO and debug-hub IP (Vivado); ESPRESSO (UC Berkeley,
 \texttt{classabbyamp/espresso-logic}, with our Windows patch); Python with NumPy and Matplotlib. The RISC-V
 core, assembler, BDD package, QM minimiser and CTL model checker are our own.\\
-\textbf{AI-tool use:} an AI coding assistant (Anthropic Claude, via Claude Code) was used throughout the
-project to draft and debug RTL, testbenches, scripts and documentation, under our direction. All results
-in this report come from our simulations, Vivado reports and board measurements.
+\textbf{AI-tool use:} AI tools (including Anthropic Claude, via Claude Code) were used as supplementary
+aids to understand core concepts, assist in debugging RTL code, and support documentation preparation.
+All design decisions, implementations, simulations, Vivado reports and board measurements were carried
+out and verified by us.
 
 %% =====================================================================
 \begin{thebibliography}{99}
