@@ -1,0 +1,13 @@
+mode cfg, die temperature 42.9 C
+LINK: echo of 24 words OK; PING 52563332 version 00010000
+ENROL device 0: key_valid=0 locked=1 cmd_err=0 ecc_ok=0 kcv_ok=0
+  helper data (offset, kcv, configuration): 62196bd7 1bd569ea 015ac9d6 00000000 b5a6d704 f5faff6e 6ceefd7b 5bbbffee f5bebbbe ade7dbbf 5be5f7fb 77caadb3 beb5e5ff fd7f8fad f3fef9f6 bfc5e5be bdbcf7fc
+ENROL again: key_valid=0 locked=1 cmd_err=1 ecc_ok=0 kcv_ok=0 -> REFUSED (locked)
+RECONSTRUCT device 0 (factory): key_valid=1 locked=1 cmd_err=0 ecc_ok=1 kcv_ok=1
+  recorded 8 challenge-response pairs
+FIELD: SoC reset (switches 0); key_valid after reset = 0
+RECONSTRUCT device 0 with restored helper data: key_valid=1 locked=0 cmd_err=0 ecc_ok=1 kcv_ok=1
+AUTH device 0: 4/4 unused challenges answered correctly -> AUTHENTICATED
+IMPOSTOR device 1: reconstruct key_valid=0 locked=0 cmd_err=0 ecc_ok=0 kcv_ok=0; AUTH REJECTED
+IMPOSTOR device 2: reconstruct key_valid=0 locked=0 cmd_err=0 ecc_ok=0 kcv_ok=0; AUTH REJECTED
+RELIABILITY: 100/100 reconstructions gave a valid key, 100/100 answered the reference challenge correctly; die temperature 42.9 C

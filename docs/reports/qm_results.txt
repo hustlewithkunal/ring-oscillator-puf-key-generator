@@ -1,0 +1,10 @@
+gf_inv  output 3:   8 ON-minterms,   7 primes, minimum cover   5 terms /  16 literals (0.00 s)
+gf_inv  output 2:   8 ON-minterms,   7 primes, minimum cover   5 terms /  16 literals (0.00 s)
+gf_inv  output 1:   8 ON-minterms,   7 primes, minimum cover   5 terms /  15 literals (0.00 s)
+gf_inv  output 0:   8 ON-minterms,   7 primes, minimum cover   6 terms /  20 literals (0.00 s)
+gf_inv  total (no sharing between outputs): 21 terms / 67 literals
+gf_mul  output 3: 120 ON-minterms,  45 primes, minimum cover  40 terms / 221 literals (0.01 s)
+gf_mul  output 2: 120 ON-minterms,  52 primes, minimum cover  40 terms / 226 literals (0.01 s)
+gf_mul  output 1: 120 ON-minterms,  60 primes, minimum cover  40 terms / 231 literals (0.01 s)
+gf_mul  output 0: 120 ON-minterms,  40 primes, minimum cover  40 terms / 216 literals (0.01 s)
+gf_mul  total (no sharing between outputs): 160 terms / 894 literals

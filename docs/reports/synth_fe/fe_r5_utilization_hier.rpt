@@ -1,0 +1,31 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2024.2 (win64) Build 5239630 Fri Nov 08 22:35:27 MST 2024
+| Date         : Wed Nov 11 13:16:20 2026
+| Host         : Venom running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -file docs/reports/synth_fe/fe_r5_utilization_hier.rpt
+| Design       : fuzzy_extractor
+| Device       : xc7z010clg400-1
+| Speed File   : -1
+| Design State : Synthesized
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++---------------------+--------------+------------+------------+---------+------+------+--------+--------+------------+
+|       Instance      |    Module    | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++---------------------+--------------+------------+------------+---------+------+------+--------+--------+------------+
+| fuzzy_extractor     |        (top) |       1233 |       1233 |       0 |    0 | 1063 |      0 |      0 |          0 |
+|   (fuzzy_extractor) |        (top) |        202 |        202 |       0 |    0 |  613 |      0 |      0 |          0 |
+|   u_dec             | bch_dec_2mul |        217 |        217 |       0 |    0 |   57 |      0 |      0 |          0 |
+|   u_sip             |    siphash24 |        814 |        814 |       0 |    0 |  393 |      0 |      0 |          0 |
++---------------------+--------------+------------+------------+---------+------+------+--------+--------+------------+
+
+

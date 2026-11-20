@@ -1,0 +1,38 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2024.2 (win64) Build 5239630 Fri Nov 08 22:35:27 MST 2024
+| Date         : Wed Nov  4 11:50:28 2026
+| Host         : Venom running 64-bit major release  (build 9200)
+| Command      : report_timing -from [all_inputs] -to [all_outputs] -max_paths 1 -file docs/reports/synth_gf/gf16_mul_sop_timing.rpt
+| Design       : gf16_mul_sop
+| Device       : 7z010-clg400
+| Speed File   : -1  PRODUCTION 1.12 2019-11-22
+| Design State : Synthesized
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack:                    inf
+  Source:                 a[0]
+                            (input port)
+  Destination:            p[0]
+                            (output port)
+  Path Group:             (none)
+  Path Type:              Max at Slow Process Corner
+  Data Path Delay:        3.305ns  (logic 0.248ns (7.504%)  route 3.057ns (92.496%))
+  Logic Levels:           2  (LUT5=1 LUT6=1)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                                                      0.000     0.000 r  a[0] (IN)
+                         net (fo=9, unset)            0.973     0.973    a[0]
+                         LUT6 (Prop_lut6_I5_O)        0.124     1.097 r  p[0]_INST_0_i_1/O
+                         net (fo=1, unplaced)         1.111     2.208    p[0]_INST_0_i_1_n_0
+                         LUT5 (Prop_lut5_I0_O)        0.124     2.332 r  p[0]_INST_0/O
+                         net (fo=0)                   0.973     3.305    p[0]
+                                                                      r  p[0] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+
+
+

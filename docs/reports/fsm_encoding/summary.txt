@@ -1,0 +1,6 @@
+encoding     LUTs   FFs   WNS ns  fmax MHz  FSMs re-encoded
+off          1346  1142    0.786     138.6  0
+one_hot      1520  1142    0.786     138.6  2
+sequential   1320  1138    0.786     138.6  3
+gray         1327  1139    0.786     138.6  3
+johnson      1397  1140    0.786     138.6  3

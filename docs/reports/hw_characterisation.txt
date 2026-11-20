@@ -1,0 +1,28 @@
+== RO frequencies (baseline configuration, window 2^13 cycles = 65.5 us) ==
+array 0: RO frequency mean 293.4 MHz, std 4.95 MHz (1.69 %), min 250.0, max 299.9; pair gap median 0.64 %, max 17.37 %
+array 1: RO frequency mean 291.1 MHz, std 7.81 MHz (2.68 %), min 233.7, max 299.4; pair gap median 0.58 %, max 23.68 %
+array 2: RO frequency mean 291.4 MHz, std 6.77 MHz (2.32 %), min 240.3, max 303.6; pair gap median 0.65 %, max 19.72 %
+
+== baseline RO-PUF ==
+array 0 room  42.3- 42.8 C: intra-HD mean 0.90 % max 2.34 % (vs majority reference 0.88 %), raw key failure 78 %, ECC r=1 0 %, r=3 0 %
+array 0 warm  48.8- 49.5 C: intra-HD mean 0.89 % max 1.56 % (vs majority reference 0.17 %), raw key failure 96 %, ECC r=1 0 %, r=3 0 %
+array 1 room  42.4- 42.7 C: intra-HD mean 2.34 % max 4.69 % (vs majority reference 1.86 %), raw key failure 98 %, ECC r=1 5 %, r=3 0 %
+array 1 warm  48.8- 49.5 C: intra-HD mean 3.45 % max 6.25 % (vs majority reference 3.30 %), raw key failure 100 %, ECC r=1 7 %, r=3 0 %
+array 2 room  42.4- 42.7 C: intra-HD mean 0.98 % max 2.34 % (vs majority reference 0.67 %), raw key failure 86 %, ECC r=1 0 %, r=3 0 %
+array 2 warm  49.0- 49.7 C: intra-HD mean 1.13 % max 3.12 % (vs majority reference 1.26 %), raw key failure 85 %, ECC r=1 0 %, r=3 0 %
+uniqueness (inter-array HD) mean 43.75 % (pairs: 41.4 %, 42.2 %, 47.7 %)
+uniformity 0.516, 0.508, 0.594, bit-aliasing mean 0.539
+
+== configurable RO-PUF ==
+array 0 room  42.4- 42.7 C: intra-HD mean 0.00 % max 0.00 % (vs majority reference 0.00 %), raw key failure 0 %, ECC r=1 0 %, r=3 0 %
+array 0 warm  48.8- 49.5 C: intra-HD mean 0.00 % max 0.00 % (vs majority reference 0.00 %), raw key failure 0 %, ECC r=1 0 %, r=3 0 %
+array 1 room  42.3- 42.8 C: intra-HD mean 0.00 % max 0.00 % (vs majority reference 0.00 %), raw key failure 0 %, ECC r=1 0 %, r=3 0 %
+array 1 warm  48.7- 49.5 C: intra-HD mean 0.00 % max 0.00 % (vs majority reference 0.00 %), raw key failure 0 %, ECC r=1 0 %, r=3 0 %
+array 2 room  42.3- 42.7 C: intra-HD mean 0.00 % max 0.00 % (vs majority reference 0.00 %), raw key failure 0 %, ECC r=1 0 %, r=3 0 %
+array 2 warm  49.0- 49.6 C: intra-HD mean 0.00 % max 0.00 % (vs majority reference 0.00 %), raw key failure 0 %, ECC r=1 0 %, r=3 0 %
+uniqueness (inter-array HD) mean 46.88 % (pairs: 46.1 %, 46.1 %, 48.4 %)
+uniformity 0.453, 0.508, 0.617, bit-aliasing mean 0.526
+
+== Predicted key-failure probability with the measured worst-case BER ==
+baseline      worst BER 3.445 %:  r=1 -> 1.0e-01  r=3 -> 3.7e-05  r=5 -> 2.7e-08
+configurable  worst BER 0.000 %:  r=1 -> 3.6e-15  r=3 -> 0.0e+00  r=5 -> 0.0e+00

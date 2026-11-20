@@ -1,0 +1,2 @@
+module      LUTs   FFs CARRY4   WNS ns  levels  fmax MHz
+siphash24    659   397     64    0.786      28     138.6

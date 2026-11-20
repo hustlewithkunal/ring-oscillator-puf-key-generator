@@ -1,0 +1,54 @@
+Model of the fuzzy-extractor sequencer: 238 reachable states, 448 transitions
+
+P1 key valid only after ECC success (spec)     HOLDS  AG (key_valid -> ecc_ok)
+P2 no enrolment after lock (spec)              HOLDS  AG (locked -> AG !enrol_started)
+P3 lock is sticky                              HOLDS  AG (locked -> AX locked)
+P4 key valid only after the KCV matched        HOLDS  AG (key_valid -> kcv_ok)
+P5 MAC only with a valid key                   HOLDS  AG (mac_running -> key_valid)
+P6 no key left behind when idle and invalid    HOLDS  AG ((idle & !key_valid) -> !key_set)
+P7 every command can complete                  HOLDS  AG (busy -> EF idle)
+N1 non-vacuity: a valid key is reachable       HOLDS  EF key_valid
+N2 non-vacuity: enrolment can lock             HOLDS  EF (locked & EF key_valid)
+
+Mutants (deliberate bugs) -- the checker must find counterexamples:
+  mutant no_lock_check : P2 no enrolment after lock (spec) -> FAILS, counterexample:
+       0: IDLE      op=MEASURE job=KDF_LO blk=0 locked=1 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       1: MEAS_REQ  op=ENROL   job=KDF_LO blk=0 locked=1 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+  mutant no_kcv_check  : P4 key valid only after the KCV matched -> FAILS, counterexample:
+       0: IDLE      op=MEASURE job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       1: MEAS_REQ  op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       2: MEAS_WAIT op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       3: REPDEC    op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       4: BCH_START op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       5: BCH_WAIT  op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       6: BCH_START op=RECON   job=KDF_LO blk=1 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       7: BCH_WAIT  op=RECON   job=KDF_LO blk=1 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       8: REBUILD   op=RECON   job=KDF_LO blk=1 locked=0 key_valid=0 ecc_ok=1 kcv_ok=0 key_set=0
+       9: H_INIT    op=RECON   job=KDF_LO blk=1 locked=0 key_valid=0 ecc_ok=1 kcv_ok=0 key_set=0
+      10: H_BLK     op=RECON   job=KDF_LO blk=1 locked=0 key_valid=0 ecc_ok=1 kcv_ok=0 key_set=0
+      11: H_WAIT    op=RECON   job=KDF_LO blk=1 locked=0 key_valid=0 ecc_ok=1 kcv_ok=0 key_set=0
+      12: H_INIT    op=RECON   job=KDF_HI blk=1 locked=0 key_valid=0 ecc_ok=1 kcv_ok=0 key_set=1
+      13: H_BLK     op=RECON   job=KDF_HI blk=1 locked=0 key_valid=0 ecc_ok=1 kcv_ok=0 key_set=1
+      14: H_WAIT    op=RECON   job=KDF_HI blk=1 locked=0 key_valid=0 ecc_ok=1 kcv_ok=0 key_set=1
+      15: H_INIT    op=RECON   job=KCV    blk=1 locked=0 key_valid=0 ecc_ok=1 kcv_ok=0 key_set=1
+      16: H_BLK     op=RECON   job=KCV    blk=1 locked=0 key_valid=0 ecc_ok=1 kcv_ok=0 key_set=1
+      17: H_WAIT    op=RECON   job=KCV    blk=1 locked=0 key_valid=0 ecc_ok=1 kcv_ok=0 key_set=1
+      18: FINISH    op=RECON   job=KCV    blk=1 locked=0 key_valid=1 ecc_ok=1 kcv_ok=0 key_set=1
+  mutant ignore_ecc    : P1 key valid only after ECC success (spec) -> FAILS, counterexample:
+       0: IDLE      op=MEASURE job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       1: MEAS_REQ  op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       2: MEAS_WAIT op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       3: REPDEC    op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       4: BCH_START op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       5: BCH_WAIT  op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       6: REBUILD   op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       7: H_INIT    op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       8: H_BLK     op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+       9: H_WAIT    op=RECON   job=KDF_LO blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=0
+      10: H_INIT    op=RECON   job=KDF_HI blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=1
+      11: H_BLK     op=RECON   job=KDF_HI blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=1
+      12: H_WAIT    op=RECON   job=KDF_HI blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=1
+      13: H_INIT    op=RECON   job=KCV    blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=1
+      14: H_BLK     op=RECON   job=KCV    blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=1
+      15: H_WAIT    op=RECON   job=KCV    blk=0 locked=0 key_valid=0 ecc_ok=0 kcv_ok=0 key_set=1
+      16: FINISH    op=RECON   job=KCV    blk=0 locked=0 key_valid=1 ecc_ok=0 kcv_ok=1 key_set=1

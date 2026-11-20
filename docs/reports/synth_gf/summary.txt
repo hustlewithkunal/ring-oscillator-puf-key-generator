@@ -1,0 +1,4 @@
+module           LUTs LUT levels  path delay ns
+gf16_mul_sop       16          2          3.305
+gf16_mul_xor        8          2          3.169
+gf16_inv_sop        4          1          2.070
