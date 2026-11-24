@@ -11,11 +11,14 @@ images are assembled with sw/rvasm.py, then xvlog / xelab / xsim are called. A t
 when its PASS line appears and no SystemVerilog assertion failed.
 
 Vivado is found through the VIVADO_BIN environment variable (the folder containing xvlog),
-then XILINX_VIVADO (set by Vivado's settings64 script), then PATH, then the default
-C:/Xilinx/Vivado/2024.2/bin.
+then XILINX_VIVADO (set by Vivado's settings64 script), then PATH, then the standard install
+folders (<drive>:/Xilinx/Vivado/<ver>, <drive>:/Xilinx/<ver>/Vivado, <drive>:/AMDDesignTools/
+<ver>/Vivado, /tools/Xilinx/... on Linux). 2024.2, the version used for the project, is
+preferred; otherwise the newest version found is used.
 """
 
 import argparse
+import glob
 import os
 import re
 import shutil
@@ -72,9 +75,19 @@ def find_vivado_bin():
     exe = shutil.which("xvlog")
     if exe:
         return os.path.dirname(exe)
-    default = "C:/Xilinx/Vivado/2024.2/bin"
-    if os.path.isdir(default):
-        return default
+    found = {}
+    roots = ["{}:/".format(d) for d in "CDE"] if WIN else ["/tools/", "/opt/"]
+    for r in roots:
+        for pattern in ("Xilinx/Vivado/20*/bin", "Xilinx/20*/Vivado/bin", "AMDDesignTools/20*/Vivado/bin"):
+            for b in glob.glob(r + pattern):
+                if os.path.isfile(os.path.join(b, "xvlog" + (".bat" if WIN else ""))):
+                    ver = re.search(r"(20\d\d\.\d)", b).group(1)
+                    found.setdefault(ver, b)
+    if found:
+        ver = "2024.2" if "2024.2" in found else max(found, key=lambda v: tuple(map(int, v.split("."))))
+        if ver != "2024.2":
+            print("Note: using Vivado {} (the project was developed with 2024.2)".format(ver))
+        return found[ver]
     sys.exit("Vivado not found: set VIVADO_BIN to the folder that contains xvlog")
 
 

@@ -7,12 +7,10 @@
 
 set root [file normalize [file dirname [info script]]/..]
 cd $root
-# open the project, or create it on a fresh system (only the part is needed)
-if {[file exists RTL_Project_Vivado/RTL_Project_Vivado.xpr]} {
-    open_project RTL_Project_Vivado/RTL_Project_Vivado.xpr
-} else {
-    create_project RTL_Project_Vivado RTL_Project_Vivado -part xc7z010clg400-1
-}
+# open the project, or create it on a fresh system; other Vivado versions are
+# handled in vivado_compat.tcl (separate project, VIO version of the installed tool)
+source $root/scripts/vivado_compat.tcl
+compat_open_project
 
 proc add_if_missing {fileset files} {
     foreach f $files {
@@ -37,9 +35,7 @@ add_if_missing constrs_1 {constraints/zybo_z7_10.xdc constraints/puf_placement.x
 if {[file exists constraints/puf_routes.xdc]} { add_if_missing constrs_1 {constraints/puf_routes.xdc} }
 set_property is_enabled true [get_files [file normalize constraints/zybo_soc_io.xdc]]
 
-if {[llength [get_ips -quiet vio_soc]] == 0} {
-    create_ip -name vio -vendor xilinx.com -library ip -version 3.0 -module_name vio_soc
-}
+compat_vio vio_soc
 set_property -dict [list \
     CONFIG.C_NUM_PROBE_IN {6} CONFIG.C_NUM_PROBE_OUT {6} CONFIG.C_EN_PROBE_IN_ACTIVITY {0} \
     CONFIG.C_PROBE_IN0_WIDTH {8}   CONFIG.C_PROBE_IN1_WIDTH {32}  CONFIG.C_PROBE_IN2_WIDTH {256} \

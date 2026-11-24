@@ -44,7 +44,7 @@ Three `.bat` files in the top folder run the board demos with no typing. Connect
 | `Show_Key.bat` | Asks B (baseline) or C (configurable); after 15 s it picks baseline. It enrols the board and shows the stored helper data and the 128-bit key, then checks that this key is the one inside the FPGA. | about 30 s |
 
 Each launcher first:
-1. Finds Vivado. It looks at `VIVADO_BIN`, then `XILINX_VIVADO`, then `PATH`, then `C:\Xilinx\Vivado\2024.2\bin`.
+1. Finds Vivado. It looks at `VIVADO_BIN`, then `XILINX_VIVADO`, then `PATH`, then the standard install folders on drives C:, D: and E:. It prefers 2024.2 and otherwise takes the newest version it finds (see [2.5](#25-other-vivado-versions)).
 2. Finds Python 3.
 3. Checks for `build\top_soc.bit` and `build\top_soc.ltx`. **If either is missing, it builds them** with `scripts\build_soc.tcl`, which takes 15–20 minutes and creates the Vivado project on a fresh system. If `sw\firmware.mem` is missing, it assembles the firmware first.
 
@@ -111,7 +111,7 @@ RO_PUF_Key_Generator/
 
 | Tool | Version used | Needed for | Notes |
 |------|--------------|------------|-------|
-| **AMD/Xilinx Vivado** | **2024.2** (64-bit) | simulation (xsim), synthesis, bitstreams, programming the board | The free *Vivado ML Standard* edition supports the Zynq-7010. Install it with "Zynq-7000" device support. It includes the simulator, `hw_server` and the JTAG cable drivers. Other versions may need a different VIO IP version in `scripts/build_*.tcl` (`-version 3.0`) |
+| **AMD/Xilinx Vivado** | **2024.2** (64-bit) | simulation (xsim), synthesis, bitstreams, programming the board | The free *Vivado ML Standard* edition supports the Zynq-7010. Install it with "Zynq-7000" device support. It includes the simulator, `hw_server` and the JTAG cable drivers. Other versions are handled automatically; see [2.5](#25-other-vivado-versions) |
 | **Python** | **3.8.10** (3.8 or newer) | golden model, all analyses, assembler, test runners | Any CPython ≥ 3.8 |
 | **NumPy** | 1.24.4 | golden model, analysis | `pip install -r requirements.txt` |
 | **Matplotlib** | 3.7.5 | plots | `pip install -r requirements.txt` |
@@ -142,7 +142,18 @@ The guide writes `vivado` for the Vivado command. Either:
 - run `C:\Xilinx\Vivado\2024.2\settings64.bat` once in your Command Prompt (it puts `vivado`, `xvlog`, … on the PATH), **or**
 - write the full path: `C:\Xilinx\Vivado\2024.2\bin\vivado.bat`.
 
-`scripts/run_sims.py` finds the simulator by itself: it checks `VIVADO_BIN`, `XILINX_VIVADO`, then `PATH`, and finally the default `C:/Xilinx/Vivado/2024.2/bin`. If Vivado is elsewhere, set `VIVADO_BIN` to its `bin` folder.
+`scripts/run_sims.py` finds the simulator by itself: it checks `VIVADO_BIN`, `XILINX_VIVADO`, then `PATH`, and finally the standard install folders. Like the launchers, it prefers 2024.2 and otherwise takes the newest version. If Vivado is elsewhere, set `VIVADO_BIN` to its `bin` folder.
+
+
+### 2.5 Other Vivado versions
+
+The project was developed, built and measured with **Vivado 2024.2**, and only that version was tested. The scripts also work with other versions:
+
+- **Finding Vivado.** The launchers and `run_sims.py` search the standard install folders: `<drive>:\Xilinx\Vivado\<ver>`, `<drive>:\Xilinx\<ver>\Vivado` and `<drive>:\AMDDesignTools\<ver>\Vivado`. They use 2024.2 if it is installed, otherwise the newest version, and print a note when it is not 2024.2. To force one version, set `VIVADO_BIN` to its `bin` folder.
+- **VIO debug core.** `scripts/vivado_compat.tcl` creates the core from whichever VIO version the installed Vivado provides. An existing core locked to another version is upgraded.
+- **Vivado project.** If `RTL_Project_Vivado` was saved by a different Vivado version, it is left untouched: an older Vivado cannot open a newer project, and a newer one would upgrade it in place. The build then uses a separate project, `RTL_Project_Vivado_v<version>` (for example `RTL_Project_Vivado_v2025_1`).
+- **What changes with another version.** The RO placement and routes are locked, but the placer puts the rest of the design elsewhere. Like any rebuild, this changes some PUF response bits. The demo still works because it enrols and reconstructs on the same bitstream. The exact numbers in the report (resource counts, slack, measured responses) come from the 2024.2 build. Other versions will give slightly different values, and timing at 125 MHz could fail by a small margin.
+- **Prebuilt bitstreams.** The files in `prebuilt/` can be programmed with any recent Vivado Hardware Manager. That is the way to reproduce the reported board results exactly.
 
 ---
 
@@ -436,7 +447,8 @@ One result worth noting from the demo: on device 1 the BCH decoder reported succ
 |---------|-----|
 | `Vivado not found` from `run_sims.py` | Set `VIVADO_BIN` to Vivado's `bin` folder, e.g. `set VIVADO_BIN=C:\Xilinx\Vivado\2024.2\bin` |
 | `xelab` error about `REP=1` on Windows | Use `run_sims.py`, which passes generics through an options file; a Windows batch file splits arguments at `=` |
-| Build fails creating the VIO IP | You are not on Vivado 2024.2: change or remove `-version 3.0` in `scripts/build_*.tcl` |
+| Build fails creating the VIO IP | `scripts/vivado_compat.tcl` picks the VIO version of your Vivado. If it still fails, check that the Vivado installation includes Zynq-7000 support. |
+| `COMPAT: ... was saved by Vivado ...` in the build log | Not an error: the project was made with another Vivado version, so a separate `RTL_Project_Vivado_v<version>` project is used (Section 2.5) |
 | `UnicodeDecodeError` in a Python script | Set `PYTHONUTF8=1` (Python on Windows otherwise uses the ANSI code page) |
 | The board is not found | Use the PROG/UART micro-USB port, power the board on, close other Vivado hardware sessions. Cable drivers: `C:\Xilinx\Vivado\2024.2\data\xicom\cable_drivers` |
 | ENROL refused right after reset | SW3 is ON (emulated fuse). Switch it off and reset |

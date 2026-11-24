@@ -28,10 +28,13 @@ set "VIVADO="
 if defined VIVADO_BIN if exist "%VIVADO_BIN%\vivado.bat" set "VIVADO=%VIVADO_BIN%\vivado.bat"
 if not defined VIVADO if defined XILINX_VIVADO if exist "%XILINX_VIVADO%\bin\vivado.bat" set "VIVADO=%XILINX_VIVADO%\bin\vivado.bat"
 if not defined VIVADO for /f "delims=" %%v in ('where vivado.bat 2^>nul') do if not defined VIVADO set "VIVADO=%%v"
-if not defined VIVADO if exist "C:\Xilinx\Vivado\2024.2\bin\vivado.bat" set "VIVADO=C:\Xilinx\Vivado\2024.2\bin\vivado.bat"
+rem standard install folders on C: D: E: - 2024.2 (the tested version) is preferred,
+rem otherwise the newest one found; other versions are handled by scripts\vivado_compat.tcl
+if not defined VIVADO call :find_vivado
 if not defined VIVADO (
-    echo [ERROR] Vivado not found. Install Vivado 2024.2, or set VIVADO_BIN to the
-    echo         folder that contains vivado.bat, e.g. C:\Xilinx\Vivado\2024.2\bin
+    echo [ERROR] Vivado not found. Install Vivado ^(this project used 2024.2^), or set
+    echo         VIVADO_BIN to the folder that contains vivado.bat,
+    echo         e.g. C:\Xilinx\Vivado\2024.2\bin
     exit /b 1
 )
 
@@ -49,6 +52,29 @@ echo Vivado         : %VIVADO%
 if defined PY echo Python         : %PY%
 if not defined PY echo Python         : not found
 echo.
+exit /b 0
+
+:find_vivado
+rem install layouts: <drive>:\Xilinx\Vivado\<ver>\bin (up to 2024.x),
+rem <drive>:\Xilinx\<ver>\Vivado\bin and <drive>:\AMDDesignTools\<ver>\Vivado\bin (newer)
+set "BESTVER="
+for %%r in (C D E) do (
+    for /d %%v in ("%%r:\Xilinx\Vivado\20*") do if exist "%%v\bin\vivado.bat" call :consider "%%~nxv" "%%v\bin\vivado.bat"
+    for /d %%v in ("%%r:\Xilinx\20*") do if exist "%%v\Vivado\bin\vivado.bat" call :consider "%%~nxv" "%%v\Vivado\bin\vivado.bat"
+    for /d %%v in ("%%r:\AMDDesignTools\20*") do if exist "%%v\Vivado\bin\vivado.bat" call :consider "%%~nxv" "%%v\Vivado\bin\vivado.bat"
+)
+if not defined VIVADO exit /b 0
+if not "%BESTVER%"=="2024.2" echo [!!] Using Vivado %BESTVER%. This project was developed with 2024.2; see the README section on Vivado versions.
+exit /b 0
+
+:consider
+rem %1 = version folder name, %2 = path of vivado.bat; 2024.2 wins, otherwise the newest
+if "%BESTVER%"=="2024.2" exit /b 0
+if "%~1"=="2024.2" goto :consider_take
+if defined BESTVER if not "%~1" GTR "%BESTVER%" exit /b 0
+:consider_take
+set "BESTVER=%~1"
+set "VIVADO=%~2"
 exit /b 0
 
 :bitstream
