@@ -75,7 +75,21 @@ if not exist "%ROOT%\sw\firmware.mem" (
 )
 set "BUILDLOG=%LOGDIR%\build_soc_%TS%.log"
 echo [..] Vivado build, full log: %BUILDLOG%
-call "%VIVADO%" -mode batch -nojournal -log "%BUILDLOG%" -source "%ROOT%\scripts\build_soc.tcl"
+rem Vivado cannot insert the debug hub (needed by our VIO) when its temporary folder
+rem path exceeds 146 characters, which happens when the project sits in a deep folder
+rem (e.g. Downloads\...-main\...-main). Then build through a temporary drive letter.
+set "BROOT=%ROOT%"
+set "SUBST_DRV="
+set "ROOT_LEN=0"
+for /f %%n in ('powershell -NoProfile -Command "$env:ROOT.Length"') do set "ROOT_LEN=%%n"
+if %ROOT_LEN% GTR 40 call :map_short_drive
+pushd "%BROOT%\"
+call "%VIVADO%" -mode batch -nojournal -log "%BUILDLOG%" -source "%BROOT%\scripts\build_soc.tcl"
+popd
+if defined SUBST_DRV (
+    subst %SUBST_DRV% /d >nul 2>&1
+    echo [..] Temporary drive %SUBST_DRV% removed.
+)
 if not exist "%ROOT%\build\top_soc.bit" goto :build_failed
 findstr /b /l /c:"BUILD_OK" "%BUILDLOG%" >nul || goto :build_failed
 echo.
@@ -85,16 +99,34 @@ exit /b 0
 :build_failed
 echo.
 echo [ERROR] The build did not produce build\top_soc.bit. See %BUILDLOG%
+findstr /l /c:"Chipscope 16-302" "%BUILDLOG%" >nul && (
+    echo         Vivado reports the folder path is too long. Move this folder to a short
+    echo         path such as C:\RO_PUF and run the launcher again.
+)
 exit /b 1
+
+:map_short_drive
+rem first free drive letter from P: upwards, mapped to the project folder
+for %%d in (P Q R S T U V W X Y) do if not defined SUBST_DRV if not exist %%d:\ set "SUBST_DRV=%%d:"
+if not defined SUBST_DRV (
+    echo [!!] Long folder path ^(%ROOT_LEN% characters^) and no free drive letter: the build may fail.
+    exit /b 0
+)
+subst %SUBST_DRV% "%ROOT%"
+if errorlevel 1 (
+    echo [!!] subst failed; building from the long path ^(%ROOT_LEN% characters^), which may fail.
+    set "SUBST_DRV="
+    exit /b 0
+)
+set "BROOT=%SUBST_DRV%"
+echo [..] Folder path is %ROOT_LEN% characters long: building through temporary drive %SUBST_DRV%
+exit /b 0
 
 :checkdemo
 rem %2 = demo text file, %3 = Vivado log, %4 = number of reliability reconstructions
 set "FAILS=0"
-if not exist "%~2" (
-    echo [FAIL] The demo did not run to the end, no result file.
-    call :hwerror - "%~3"
-    exit /b 1
-)
+if not exist "%~2" goto :demo_not_run
+findstr /l /c:"LINK:" "%~2" >nul || goto :demo_not_run
 echo.
 echo ============================== DEMO OUTPUT ==============================
 type "%~2"
@@ -113,6 +145,12 @@ findstr /l /c:"ENROL device 0: key_valid=0 locked=1 cmd_err=1" "%~2" >nul && (
 echo.
 if "%FAILS%"=="0" (echo RESULT: ALL CHECKS PASSED) else (echo RESULT: %FAILS% CHECK^(S^) FAILED)
 if "%FAILS%"=="0" exit /b 0
+exit /b 1
+
+:demo_not_run
+echo.
+echo [FAIL] The demo did not start: no answer from the board.
+call :hwerror - "%~3"
 exit /b 1
 
 :expect
@@ -135,7 +173,7 @@ findstr /l /i /c:"No hardware targets" /c:"no hw_target" /c:"Labtoolstcl 44-" "%
     echo   driver is installed ^(it comes with Vivado^). Close the Hardware Manager in any
     echo   open Vivado window, it holds the JTAG cable.
 )
-findstr /l /c:"firmware not responding" /c:"timed out" "%~2" >nul && (
+findstr /r /b /c:"firmware not responding" /c:"command [0-9]* timed out" "%~2" >nul && (
     echo   The firmware did not answer over the mailbox. Press the board reset or power
     echo   cycle the board and run again.
 )

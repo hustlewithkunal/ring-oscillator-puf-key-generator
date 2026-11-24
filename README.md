@@ -442,6 +442,7 @@ One result worth noting from the demo: on device 1 the BCH decoder reported succ
 | ENROL refused right after reset | SW3 is ON (emulated fuse). Switch it off and reset |
 | `key_valid=0` for device 0 with old helper data | The bitstream was rebuilt (the PUF changed). Enrol again, or use the prebuilt bitstream |
 | `no VIO probe ...` | The `.ltx` file is not from the same build as the `.bit` |
+| `ERROR: [Chipscope 16-302] Could not generate core for dbg_hub ... temporary directory path ... exceeds 146 characters` | The folder sits in too deep a path, for example `Downloads\...-main\...-main\`. The `.bat` launchers handle this: for paths over 40 characters they build through a temporary drive letter (`subst`). When running `build_soc.tcl` by hand, move the folder to a short path such as `C:\RO_PUF` |
 
 ---
 
